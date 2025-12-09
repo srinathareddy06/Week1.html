@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intermediate HTML, CSS & JavaScript</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f4f9;
+        }
+
+        header {
+            background: #0a6c74;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .section {
+            background: white;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 10px;
+        }
+
+        input, textarea {
+            padding: 10px;
+            width: 100%;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #aaa;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background: #0a9396;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #056b70;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+
+        /* Grid Layout */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .grid-item {
+            background: #94d2bd;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        /* To-do List */
+        #todoList li {
+            background: #e5e5e5;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .delete-btn {
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+<body>
+
+    <header>
+        <h1>Intermediate HTML, CSS & JavaScript Project</h1>
+    </header>
+
+    <!-- Contact Form -->
+    <section class="section">
+        <h2>Contact Form</h2>
+
+        <p class="error" id="errorMessage"></p>
+
+        <form id="contactForm">
+            <label>Name</label>
+            <input type="text" id="name">
+
+            <label>Email</label>
+            <input type="email" id="email">
+
+            <label>Message</label>
+            <textarea id="message"></textarea>
+
+            <button type="submit">Submit</button>
+        </form>
+
+        <p id="successMessage" style="color:green;font-weight:bold;"></p>
+    </section>
+
+    <!-- Responsive Grid -->
+    <section class="section">
+        <h2>Responsive Grid Layout</h2>
+
+        <div class="grid-container">
+            <div class="grid-item">Box 1</div>
+            <div class="grid-item">Box 2</div>
+            <div class="grid-item">Box 3</div>
+            <div class="grid-item">Box 4</div>
+        </div>
+    </section>
+
+    <!-- To-Do List -->
+    <section class="section">
+        <h2>Dynamic To-Do List</h2>
+
+        <input type="text" id="todoInput" placeholder="Enter task...">
+        <button onclick="addTask()">Add Task</button>
+
+        <ul id="todoList"></ul>
+    </section>
+
+    <script>
+
+        // ------------------------ FORM VALIDATION --------------------------
+        document.getElementById("contactForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            let name = document.getElementById("name").value.trim();
+            let email = document.getElementById("email").value.trim();
+            let message = document.getElementById("message").value.trim();
+
+            let error = "";
+            let emailPattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+
+            if (name === "") error += "Name is required.<br>";
+            if (email === "" || !emailPattern.test(email)) error += "Valid email is required.<br>";
+            if (message === "") error += "Message cannot be empty.<br>";
+
+            if (error !== "") {
+                document.getElementById("errorMessage").innerHTML = error;
+                return;
+            }
+
+            document.getElementById("errorMessage").innerHTML = "";
+            document.getElementById("successMessage").innerHTML = "Form submitted successfully!";
+            document.getElementById("contactForm").reset();
+        });
+
+        // -------------------------- TODO LIST -----------------------------
+        function addTask() {
+            let text = document.getElementById("todoInput").value.trim();
+            if (text === "") {
+                alert("Enter a task!");
+                return;
+            }
+
+            let li = document.createElement("li");
+            li.innerHTML = `
+                ${text}
+                <button class="delete-btn" onclick="this.parentElement.remove()">Delete</button>
+            `;
+
+            document.getElementById("todoList").appendChild(li);
+            document.getElementById("todoInput").value = "";
+        }
+
+    </script>
+
+</body>
+</html>
