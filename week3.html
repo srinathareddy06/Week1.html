@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz + Joke</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+}
+header {
+    background-color: #2c7be5;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border: none;
+    border-radius: 5px;
+    background-color: #2c7be5;
+    color: white;
+    cursor: pointer;
+}
+button.correct { background-color: green; }
+button.wrong { background-color: red; }
+button.next { background-color: orange; }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Quiz & Joke Application</h1>
+    <p>Correct / Wrong | Fetch API</p>
+</header>
+
+<div class="container">
+
+<!-- ===== QUIZ ===== -->
+<div class="card">
+    <h2>Interactive Quiz</h2>
+    <p id="question"></p>
+    <div id="options"></div>
+    <button id="nextBtn" class="next" style="display:none;" onclick="nextQuestion()">Next Question</button>
+    <p id="result"></p>
+</div>
+
+<!-- ===== JOKE ===== -->
+<div class="card">
+    <h2>Joke Section</h2>
+    <p id="joke">Click button to get a joke</p>
+    <button onclick="getJoke()">Get Joke</button>
+</div>
+
+</div>
+
+<script>
+/* ===== QUIZ QUESTIONS ===== */
+const quiz = [
+    { question: "HTML stands for?", options: ["Hyper Text Markup Language","High Text Machine Language","Hyper Tool ML","None"], answer: 0 },
+    { question: "CSS is used for?", options: ["Logic","Styling","Database","Server"], answer: 1 },
+    { question: "JavaScript is used for?", options: ["Design","Structure","Interactivity","Storage"], answer: 2 },
+    { question: "Which tag is used for paragraph?", options: ["<div>","<p>","<h1>","<span>"], answer: 1 },
+    { question: "Which is NOT a programming language?", options: ["Python","Java","HTML","C"], answer: 2 },
+    { question: "Which symbol starts a comment in JS?", options: ["//","<!--","##","**"], answer: 0 },
+    { question: "Which company developed JavaScript?", options: ["Google","Microsoft","Netscape","Apple"], answer: 2 },
+    { question: "Which HTML tag shows largest heading?", options: ["<h6>","<h4>","<h1>","<head>"], answer: 2 }
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+/* ===== LOAD QUESTION ===== */
+function loadQuestion() {
+    const q = quiz[currentQuestion];
+    document.getElementById("question").innerText =
+        `Q${currentQuestion + 1}. ${q.question}`;
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+    document.getElementById("result").innerText = "";
+    document.getElementById("nextBtn").style.display = "none";
+
+    q.options.forEach((opt, index) => {
+        const btn = document.createElement("button");
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(btn, index);
+        optionsDiv.appendChild(btn);
+    });
+}
+
+/* ===== CHECK ANSWER ===== */
+function checkAnswer(button, index) {
+    const correctIndex = quiz[currentQuestion].answer;
+    const buttons = document.querySelectorAll("#options button");
+    const result = document.getElementById("result");
+
+    buttons.forEach(b => b.disabled = true);
+
+    if (index === correctIndex) {
+        button.classList.add("correct");
+        result.innerText = "✅ Correct!";
+        result.style.color = "green";
+        score++;
+    } else {
+        button.classList.add("wrong");
+        buttons[correctIndex].classList.add("correct");
+        result.innerText = "❌ Wrong!";
+        result.style.color = "red";
+    }
+
+    document.getElementById("nextBtn").style.display = "block";
+}
+
+/* ===== NEXT QUESTION ===== */
+function nextQuestion() {
+    currentQuestion++;
+
+    if (currentQuestion < quiz.length) {
+        loadQuestion();
+    } else {
+        showFinalScore();
+    }
+}
+
+/* ===== FINAL SCORE (NO REPEAT) ===== */
+function showFinalScore() {
+    document.getElementById("question").innerText = "✅ Quiz Completed!";
+    document.getElementById("options").innerHTML = "";
+    document.getElementById("nextBtn").style.display = "none";
+
+    const result = document.getElementById("result");
+    result.innerText = `Final Score: ${score} / ${quiz.length}`;
+    result.style.color = "black";
+}
+
+/* ===== START QUIZ ===== */
+loadQuestion();
+
+/* ===== FETCH JOKE ===== */
+function getJoke() {
+    const jokePara = document.getElementById("joke");
+    jokePara.innerText = "⏳ Loading joke...";
+
+    fetch("https://official-joke-api.appspot.com/random_joke")
+        .then(res => res.json())
+        .then(data => {
+            jokePara.innerText = "😂 " + data.setup + " — " + data.punchline;
+        })
+        .catch(() => {
+            jokePara.innerText = "❌ Joke is not loading!";
+        });
+}
+</script>
+
+</body>
+</html>
