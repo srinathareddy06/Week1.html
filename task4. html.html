@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Full Project Implementation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f4f4;
+    }
+    header {
+      background: #0a7cff;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    nav a {
+      color: white;
+      margin: 0 10px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    section {
+      background: white;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    h2 {
+      color: #0a7cff;
+    }
+    input, select, button {
+      padding: 8px;
+      margin: 5px;
+    }
+    button {
+      background: #0a7cff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: #eee;
+      margin: 5px 0;
+      padding: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    .card {
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>My Portfolio Website</h1>
+  <nav>
+    <a href="#about">About</a>
+    <a href="#todo">To-Do</a>
+    <a href="#products">Products</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<!-- ABOUT -->
+<section id="about">
+  <h2>About Me</h2>
+  <p>Hello! I am a web developer skilled in HTML, CSS, and JavaScript.</p>
+</section>
+
+<!-- TO-DO APP -->
+<section id="todo">
+  <h2>To-Do List (Local Storage)</h2>
+  <input type="text" id="taskInput" placeholder="Enter task">
+  <button onclick="addTask()">Add</button>
+  <ul id="taskList"></ul>
+</section>
+
+<!-- PRODUCT LIST -->
+<section id="products">
+  <h2>Product Listing</h2>
+
+  <select id="categoryFilter" onchange="displayProducts()">
+    <option value="all">All Categories</option>
+    <option value="electronics">Electronics</option>
+    <option value="fashion">Fashion</option>
+  </select>
+
+  <select id="sortPrice" onchange="displayProducts()">
+    <option value="none">Sort by Price</option>
+    <option value="low">Low to High</option>
+    <option value="high">High to Low</option>
+  </select>
+
+  <div class="products" id="productContainer"></div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <h2>Contact Me</h2>
+  <p>Email: bhu123@email.com</p>
+</section>
+
+<script>
+  /* TO-DO LIST WITH LOCAL STORAGE */
+  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+  function addTask() {
+    let input = document.getElementById("taskInput");
+    let value = input.value.trim();
+    if (value === "") return;
+
+    tasks.push(value);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    input.value = "";
+    showTasks();
+  }
+
+  function deleteTask(index) {
+    tasks.splice(index, 1);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    showTasks();
+  }
+
+  function showTasks() {
+    let list = document.getElementById("taskList");
+    list.innerHTML = "";
+
+    tasks.forEach((task, index) => {
+      list.innerHTML += `
+        <li>
+          ${task}
+          <button onclick="deleteTask(${index})">X</button>
+        </li>
+      `;
+    });
+  }
+
+  showTasks();
+
+  /* PRODUCT LISTING */
+  const products = [
+    { name: "Mobile", category: "electronics", price: 15000 },
+    { name: "Laptop", category: "electronics", price: 55000 },
+    { name: "Shirt", category: "fashion", price: 1200 },
+    { name: "Shoes", category: "fashion", price: 3000 }
+  ];
+
+  function displayProducts() {
+    let category = document.getElementById("categoryFilter").value;
+    let sort = document.getElementById("sortPrice").value;
+
+    let filtered = products.filter(
+      p => category === "all" || p.category === category
+    );
+
+    if (sort === "low") filtered.sort((a, b) => a.price - b.price);
+    if (sort === "high") filtered.sort((a, b) => b.price - a.price);
+
+    let container = document.getElementById("productContainer");
+    container.innerHTML = "";
+
+    filtered.forEach(p => {
+      container.innerHTML += `
+        <div class="card">
+          <h4>${p.name}</h4>
+          <p>Category: ${p.category}</p>
+          <p>Price: ₹${p.price}</p>
+        </div>
+      `;
+    });
+  }
+
+  displayProducts();
+</script>
+
+</body>
+</html>
